@@ -276,11 +276,11 @@ export default function HurturOtel() {
       <section className="hero">
         <div className="hero-bg" />
         <div className="hero-content">
-          <img 
-            src="/images/logo.png" 
-            alt="Hürtur Otel" 
-            className="hero-logo"
-          />
+          <div className="hero-title-container">
+            <h1 className="hero-title">HÜRTUR</h1>
+            <span className="hero-subtitle">OTEL</span>
+            <div className="hero-location">Yatağan, Muğla</div>
+          </div>
           <div className="slogan-container">
             {t.hero.slogans.map((slogan, index) => (
               <p 
@@ -315,18 +315,37 @@ export default function HurturOtel() {
           <div className="rooms-grid">
             {t.rooms.types.map((room, index) => {
               const IconComponent = roomIcons[index];
+              const roomImages = [
+                '/images/rooms/standard.jpg',
+                '/images/rooms/twin.jpg', 
+                '/images/rooms/triple.jpg',
+                '/images/rooms/family.jpg'
+              ];
               return (
                 <div 
                   key={index} 
                   className={`room-card ${visibleSections.rooms ? 'visible' : ''}`}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  <div className="room-icon">
-                    <IconComponent size={32} />
+                  <div className="room-image-container">
+                    <img 
+                      src={roomImages[index]}
+                      alt={room.name}
+                      className="room-image"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div className="room-image-placeholder">
+                      <IconComponent size={48} />
+                    </div>
                   </div>
-                  <h3 className="room-name">{room.name}</h3>
-                  <p className="room-desc">{room.desc}</p>
-                  <span className="room-count">{room.count}</span>
+                  <div className="room-info">
+                    <h3 className="room-name">{room.name}</h3>
+                    <p className="room-desc">{room.desc}</p>
+                    <span className="room-count">{room.count}</span>
+                  </div>
                 </div>
               );
             })}
@@ -814,16 +833,46 @@ export default function HurturOtel() {
           z-index: 10;
         }
         
-        .hero-logo {
-          height: 120px;
-          width: auto;
+        .hero-title-container {
           margin-bottom: 2rem;
-          filter: drop-shadow(0 4px 30px rgba(0,0,0,0.3));
+        }
+        
+        .hero-title {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: clamp(4rem, 12vw, 8rem);
+          font-weight: 700;
+          color: #c9a227;
+          letter-spacing: 8px;
+          margin: 0;
+          line-height: 1;
+          text-shadow: 0 4px 30px rgba(0,0,0,0.5);
+        }
+        
+        .hero-subtitle {
+          display: block;
+          font-family: 'Montserrat', sans-serif;
+          font-size: clamp(1.2rem, 3vw, 2rem);
+          font-weight: 300;
+          color: #fff;
+          letter-spacing: 12px;
+          margin-top: 0.5rem;
+          text-transform: uppercase;
+        }
+        
+        .hero-location {
+          font-family: 'Montserrat', sans-serif;
+          font-size: 1rem;
+          color: rgba(255,255,255,0.6);
+          margin-top: 1rem;
+          letter-spacing: 2px;
         }
         
         @media (max-width: 768px) {
-          .hero-logo {
-            height: 80px;
+          .hero-title {
+            letter-spacing: 4px;
+          }
+          .hero-subtitle {
+            letter-spacing: 6px;
           }
         }
         
@@ -960,15 +1009,14 @@ export default function HurturOtel() {
         
         .rooms-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
           gap: 1.5rem;
         }
         
         .room-card {
           background: #fff;
-          padding: 2rem;
-          border-radius: 8px;
-          text-align: center;
+          border-radius: 12px;
+          overflow: hidden;
           box-shadow: 0 2px 20px rgba(0,0,0,0.06);
           border: 1px solid #eee;
           opacity: 0;
@@ -982,20 +1030,36 @@ export default function HurturOtel() {
         }
         
         .room-card:hover {
-          box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+          box-shadow: 0 8px 30px rgba(0,0,0,0.12);
           transform: translateY(-4px);
         }
         
-        .room-icon {
-          width: 60px;
-          height: 60px;
-          margin: 0 auto 1.2rem;
-          display: flex;
+        .room-image-container {
+          position: relative;
+          width: 100%;
+          height: 200px;
+          background: linear-gradient(135deg, #1a251a 0%, #2d3a2d 100%);
+        }
+        
+        .room-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        
+        .room-image-placeholder {
+          display: none;
+          position: absolute;
+          inset: 0;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
-          color: #fff;
-          border-radius: 50%;
+          background: linear-gradient(135deg, #1a251a 0%, #2d3a2d 100%);
+          color: #c9a227;
+        }
+        
+        .room-info {
+          padding: 1.5rem;
+          text-align: center;
         }
         
         .room-name {
