@@ -214,12 +214,20 @@ export default function HurturOtel() {
       {/* Navigation */}
       <nav className="nav">
         <div className="nav-content">
-          <div className="logo-container">
+          <div className="logo-container" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
             <img 
               src="/images/logo.png" 
               alt="Hürtur Otel" 
               className="logo-image"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'flex';
+              }}
             />
+            <div className="logo-text-fallback">
+              <span className="logo-name">HÜRTUR</span>
+              <span className="logo-type">OTEL</span>
+            </div>
           </div>
           
           <div className="nav-links">
@@ -274,13 +282,22 @@ export default function HurturOtel() {
 
       {/* Hero Section */}
       <section className="hero">
-        <div className="hero-bg" />
+        <div className="hero-bg">
+          <img 
+            src="/images/hero-bg.jpg" 
+            alt="" 
+            className="hero-bg-image"
+            onError={(e) => e.target.style.display = 'none'}
+          />
+        </div>
+        <div className="hero-overlay" />
         <div className="hero-content">
+          <div className="hero-badge">{lang === 'tr' ? 'YATAĞAN, MUĞLA' : 'YATAĞAN, MUĞLA'}</div>
           <div className="hero-title-container">
             <h1 className="hero-title">HÜRTUR</h1>
             <span className="hero-subtitle">OTEL</span>
-            <div className="hero-location">Yatağan, Muğla</div>
           </div>
+          <div className="hero-divider" />
           <div className="slogan-container">
             {t.hero.slogans.map((slogan, index) => (
               <p 
@@ -296,14 +313,43 @@ export default function HurturOtel() {
               <span key={i} className={`dot ${currentSlogan === i ? 'active' : ''}`} />
             ))}
           </div>
-          <a href="tel:+905331350103" className="cta-button">
-            <Phone size={20} />
-            <span>{t.hero.cta}</span>
-          </a>
-          <p className="hero-phone">0533 135 01 03</p>
         </div>
         <div className="scroll-indicator">
           <ChevronDown size={32} className="scroll-icon" />
+        </div>
+      </section>
+
+      {/* Quick Info Bar */}
+      <section className="quick-info-bar">
+        <div className="quick-info-content">
+          <div className="quick-info-item">
+            <Clock size={24} />
+            <div>
+              <span className="quick-label">{lang === 'tr' ? 'Giriş' : 'Check-in'}</span>
+              <span className="quick-value">13:00 - 14:00</span>
+            </div>
+          </div>
+          <div className="quick-info-item">
+            <Clock size={24} />
+            <div>
+              <span className="quick-label">{lang === 'tr' ? 'Çıkış' : 'Check-out'}</span>
+              <span className="quick-value">11:00 - 12:00</span>
+            </div>
+          </div>
+          <div className="quick-info-item">
+            <Coffee size={24} />
+            <div>
+              <span className="quick-label">{lang === 'tr' ? 'Kahvaltı' : 'Breakfast'}</span>
+              <span className="quick-value">07:30 - 11:00</span>
+            </div>
+          </div>
+          <a href="tel:+905331350103" className="quick-info-cta">
+            <Phone size={20} />
+            <div>
+              <span className="quick-label">{t.hero.cta}</span>
+              <span className="quick-value">0533 135 01 03</span>
+            </div>
+          </a>
         </div>
       </section>
 
@@ -671,11 +717,34 @@ export default function HurturOtel() {
         .logo-container {
           display: flex;
           align-items: center;
+          cursor: pointer;
         }
         
         .logo-image {
           height: 50px;
           width: auto;
+        }
+        
+        .logo-text-fallback {
+          display: none;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        
+        .logo-name {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 1.6rem;
+          font-weight: 700;
+          color: #c9a227;
+          letter-spacing: 2px;
+        }
+        
+        .logo-type {
+          font-family: 'Montserrat', sans-serif;
+          font-size: 0.9rem;
+          font-weight: 400;
+          color: #fff;
+          letter-spacing: 3px;
         }
         
         .nav-links {
@@ -814,16 +883,29 @@ export default function HurturOtel() {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(160deg, #1a251a 0%, #0d130d 100%);
+          background: #0d130d;
           overflow: hidden;
         }
         
         .hero-bg {
           position: absolute;
           inset: 0;
+        }
+        
+        .hero-bg-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          opacity: 0.4;
+        }
+        
+        .hero-overlay {
+          position: absolute;
+          inset: 0;
           background: 
-            radial-gradient(ellipse at 20% 40%, rgba(39, 174, 96, 0.15) 0%, transparent 50%),
-            radial-gradient(ellipse at 80% 60%, rgba(201, 162, 39, 0.1) 0%, transparent 40%);
+            linear-gradient(180deg, rgba(13, 19, 13, 0.7) 0%, rgba(13, 19, 13, 0.4) 50%, rgba(13, 19, 13, 0.8) 100%),
+            radial-gradient(ellipse at 30% 30%, rgba(39, 174, 96, 0.2) 0%, transparent 50%),
+            radial-gradient(ellipse at 70% 70%, rgba(201, 162, 39, 0.15) 0%, transparent 50%);
         }
         
         .hero-content {
@@ -833,53 +915,67 @@ export default function HurturOtel() {
           z-index: 10;
         }
         
-        .hero-title-container {
+        .hero-badge {
+          display: inline-block;
+          padding: 0.5rem 1.5rem;
+          border: 1px solid rgba(201, 162, 39, 0.5);
+          color: #c9a227;
+          font-size: 0.85rem;
+          letter-spacing: 3px;
           margin-bottom: 2rem;
+          font-family: 'Montserrat', sans-serif;
+        }
+        
+        .hero-title-container {
+          margin-bottom: 1.5rem;
         }
         
         .hero-title {
           font-family: 'Cormorant Garamond', serif;
-          font-size: clamp(4rem, 12vw, 8rem);
-          font-weight: 700;
+          font-size: clamp(4rem, 15vw, 10rem);
+          font-weight: 600;
           color: #c9a227;
-          letter-spacing: 8px;
+          letter-spacing: 12px;
           margin: 0;
-          line-height: 1;
+          line-height: 0.9;
           text-shadow: 0 4px 30px rgba(0,0,0,0.5);
         }
         
         .hero-subtitle {
           display: block;
           font-family: 'Montserrat', sans-serif;
-          font-size: clamp(1.2rem, 3vw, 2rem);
+          font-size: clamp(1.5rem, 4vw, 2.5rem);
           font-weight: 300;
           color: #fff;
-          letter-spacing: 12px;
-          margin-top: 0.5rem;
+          letter-spacing: 20px;
+          margin-top: 0.8rem;
           text-transform: uppercase;
         }
         
-        .hero-location {
-          font-family: 'Montserrat', sans-serif;
-          font-size: 1rem;
-          color: rgba(255,255,255,0.6);
-          margin-top: 1rem;
-          letter-spacing: 2px;
+        .hero-divider {
+          width: 80px;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, #c9a227, transparent);
+          margin: 2rem auto;
         }
         
         @media (max-width: 768px) {
           .hero-title {
-            letter-spacing: 4px;
+            letter-spacing: 6px;
           }
           .hero-subtitle {
-            letter-spacing: 6px;
+            letter-spacing: 10px;
+          }
+          .hero-badge {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
           }
         }
         
         .slogan-container {
           position: relative;
           height: 50px;
-          margin-bottom: 1.5rem;
+          margin-bottom: 1rem;
         }
         
         .slogan {
@@ -904,7 +1000,6 @@ export default function HurturOtel() {
           display: flex;
           justify-content: center;
           gap: 0.6rem;
-          margin-bottom: 2.5rem;
         }
         
         .dot {
@@ -965,6 +1060,88 @@ export default function HurturOtel() {
           0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
           40% { transform: translateX(-50%) translateY(-10px); }
           60% { transform: translateX(-50%) translateY(-5px); }
+        }
+        
+        /* Quick Info Bar */
+        .quick-info-bar {
+          background: linear-gradient(135deg, #1a251a 0%, #263126 100%);
+          padding: 0;
+          border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+        }
+        
+        .quick-info-content {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+        
+        .quick-info-item {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1.5rem 2.5rem;
+          border-right: 1px solid rgba(255,255,255,0.1);
+          color: #fff;
+        }
+        
+        .quick-info-item:last-of-type {
+          border-right: none;
+        }
+        
+        .quick-info-item svg {
+          color: #c9a227;
+        }
+        
+        .quick-label {
+          display: block;
+          font-size: 0.75rem;
+          color: rgba(255,255,255,0.6);
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 0.2rem;
+        }
+        
+        .quick-value {
+          display: block;
+          font-size: 1rem;
+          font-weight: 600;
+          color: #fff;
+        }
+        
+        .quick-info-cta {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1.5rem 2.5rem;
+          background: #c9a227;
+          color: #fff;
+          text-decoration: none;
+          transition: background 0.3s;
+        }
+        
+        .quick-info-cta:hover {
+          background: #d4a82c;
+        }
+        
+        .quick-info-cta .quick-label {
+          color: rgba(255,255,255,0.8);
+        }
+        
+        @media (max-width: 900px) {
+          .quick-info-content {
+            flex-direction: column;
+          }
+          .quick-info-item {
+            border-right: none;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            justify-content: center;
+            padding: 1rem 2rem;
+          }
+          .quick-info-cta {
+            justify-content: center;
+          }
         }
         
         /* Sections */
