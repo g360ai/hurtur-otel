@@ -708,7 +708,7 @@ export default function HurturOtel() {
         .nav-content {
           max-width: 1400px;
           margin: 0 auto;
-          padding: 0.6rem 2rem;
+          padding: 0.4rem 2rem;
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -721,7 +721,7 @@ export default function HurturOtel() {
         }
         
         .logo-image {
-          height: 50px;
+          height: 70px;
           width: auto;
         }
         
@@ -733,7 +733,7 @@ export default function HurturOtel() {
         
         .logo-name {
           font-family: 'Cormorant Garamond', serif;
-          font-size: 1.6rem;
+          font-size: 2rem;
           font-weight: 700;
           color: #c9a227;
           letter-spacing: 2px;
@@ -741,7 +741,7 @@ export default function HurturOtel() {
         
         .logo-type {
           font-family: 'Montserrat', sans-serif;
-          font-size: 0.9rem;
+          font-size: 1rem;
           font-weight: 400;
           color: #fff;
           letter-spacing: 3px;
