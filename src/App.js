@@ -41,15 +41,15 @@ const translations = {
       title: 'Keşfedilecek Yerler',
       subtitle: 'Tarihi ve doğal güzelliklere yakın konum',
       places: [
-        { name: 'Yatağan Merkez', distance: '2', type: 'city', x: 0, y: -60 },
-        { name: 'Stratonikeia', distance: '10', type: 'history', x: -80, y: 60 },
-        { name: 'Lagina', distance: '10', type: 'history', x: 70, y: 50 },
-        { name: 'Belen Kahvesi', distance: '10', type: 'nature', x: 100, y: -20 },
-        { name: 'Muğla', distance: '25', type: 'city', x: 120, y: -70 },
-        { name: 'Gökova', distance: '52', type: 'coast', x: 80, y: 80 },
-        { name: 'Milas', distance: '60', type: 'city', x: -100, y: -50 },
-        { name: 'Bodrum', distance: '60', type: 'coast', x: -120, y: 70 },
-        { name: 'Marmaris', distance: '90', type: 'coast', x: 140, y: 60 }
+        { name: 'Yatağan Merkez', distance: '2', type: 'city', x: 0, y: -75, labelPos: 'top' },
+        { name: 'Stratonikeia', distance: '10', type: 'history', x: -120, y: 20, labelPos: 'left' },
+        { name: 'Lagina', distance: '10', type: 'history', x: 100, y: 40, labelPos: 'right' },
+        { name: 'Belen Kahvesi', distance: '10', type: 'nature', x: 130, y: -40, labelPos: 'right' },
+        { name: 'Muğla', distance: '25', type: 'city', x: 150, y: -90, labelPos: 'top' },
+        { name: 'Gökova', distance: '52', type: 'coast', x: 30, y: 110, labelPos: 'bottom' },
+        { name: 'Milas', distance: '60', type: 'city', x: -140, y: -70, labelPos: 'left' },
+        { name: 'Bodrum', distance: '60', type: 'coast', x: -150, y: 85, labelPos: 'left' },
+        { name: 'Marmaris', distance: '90', type: 'coast', x: 150, y: 100, labelPos: 'right' }
       ]
     },
     reviews: {
@@ -114,15 +114,15 @@ const translations = {
       title: 'Places to Explore',
       subtitle: 'Close to historical and natural beauties',
       places: [
-        { name: 'Yatağan Center', distance: '2', type: 'city', x: 0, y: -60 },
-        { name: 'Stratonikeia', distance: '10', type: 'history', x: -80, y: 60 },
-        { name: 'Lagina', distance: '10', type: 'history', x: 70, y: 50 },
-        { name: 'Belen Coffeehouse', distance: '10', type: 'nature', x: 100, y: -20 },
-        { name: 'Muğla', distance: '25', type: 'city', x: 120, y: -70 },
-        { name: 'Gökova', distance: '52', type: 'coast', x: 80, y: 80 },
-        { name: 'Milas', distance: '60', type: 'city', x: -100, y: -50 },
-        { name: 'Bodrum', distance: '60', type: 'coast', x: -120, y: 70 },
-        { name: 'Marmaris', distance: '90', type: 'coast', x: 140, y: 60 }
+        { name: 'Yatağan Center', distance: '2', type: 'city', x: 0, y: -75, labelPos: 'top' },
+        { name: 'Stratonikeia', distance: '10', type: 'history', x: -120, y: 20, labelPos: 'left' },
+        { name: 'Lagina', distance: '10', type: 'history', x: 100, y: 40, labelPos: 'right' },
+        { name: 'Belen Coffeehouse', distance: '10', type: 'nature', x: 130, y: -40, labelPos: 'right' },
+        { name: 'Muğla', distance: '25', type: 'city', x: 150, y: -90, labelPos: 'top' },
+        { name: 'Gökova', distance: '52', type: 'coast', x: 30, y: 110, labelPos: 'bottom' },
+        { name: 'Milas', distance: '60', type: 'city', x: -140, y: -70, labelPos: 'left' },
+        { name: 'Bodrum', distance: '60', type: 'coast', x: -150, y: 85, labelPos: 'left' },
+        { name: 'Marmaris', distance: '90', type: 'coast', x: 150, y: 100, labelPos: 'right' }
       ]
     },
     reviews: {
@@ -470,9 +470,26 @@ export default function HurturOtel() {
           
           <div className="location-container">
             <div className="map-visual-new">
-              <svg viewBox="-200 -150 400 300" className="map-svg">
+              <svg viewBox="-220 -160 440 320" className="map-svg">
                 {/* Connection lines with arrows */}
-                {t.location.places.map((place, index) => (
+                {t.location.places.map((place, index) => {
+                  // Label pozisyonlarını hesapla
+                  const getLabelOffset = () => {
+                    switch(place.labelPos) {
+                      case 'top': return { x: 0, y: -15, anchor: 'middle' };
+                      case 'bottom': return { x: 0, y: 20, anchor: 'middle' };
+                      case 'left': return { x: -12, y: 4, anchor: 'end' };
+                      case 'right': return { x: 12, y: 4, anchor: 'start' };
+                      default: return { x: 0, y: -15, anchor: 'middle' };
+                    }
+                  };
+                  const labelOffset = getLabelOffset();
+                  
+                  // Mesafe yazısı pozisyonunu çizginin 1/3'üne koy (merkeze daha yakın)
+                  const distX = place.x * 0.4;
+                  const distY = place.y * 0.4;
+                  
+                  return (
                   <g key={index}>
                     <line
                       x1="0"
@@ -480,8 +497,8 @@ export default function HurturOtel() {
                       x2={place.x}
                       y2={place.y}
                       stroke={getTypeColor(place.type)}
-                      strokeWidth="2"
-                      strokeDasharray="5,3"
+                      strokeWidth="1.5"
+                      strokeDasharray="4,4"
                       className={`map-line ${activePlace === index ? 'active' : ''}`}
                     />
                     <circle
@@ -494,37 +511,39 @@ export default function HurturOtel() {
                       onMouseLeave={() => setActivePlace(null)}
                     />
                     <text
-                      x={place.x}
-                      y={place.y - 12}
-                      textAnchor="middle"
+                      x={place.x + labelOffset.x}
+                      y={place.y + labelOffset.y}
+                      textAnchor={labelOffset.anchor}
                       className={`map-label ${activePlace === index ? 'active' : ''}`}
                       fill="#fff"
-                      fontSize="11"
+                      fontSize="10"
+                      fontWeight="500"
                     >
                       {place.name}
                     </text>
                     <text
-                      x={place.x / 2}
-                      y={place.y / 2 - 8}
+                      x={distX}
+                      y={distY}
                       textAnchor="middle"
                       className="map-distance"
                       fill={getTypeColor(place.type)}
-                      fontSize="10"
-                      fontWeight="bold"
+                      fontSize="9"
+                      fontWeight="600"
                     >
                       {place.distance} km
                     </text>
                   </g>
-                ))}
+                  );
+                })}
                 
                 {/* Hotel center marker */}
-                <circle cx="0" cy="0" r="20" fill="#c9a227" className="hotel-dot" />
-                <circle cx="0" cy="0" r="12" fill="#1a251a" />
-                <circle cx="0" cy="0" r="6" fill="#c9a227" />
-                <text x="0" y="35" textAnchor="middle" fill="#c9a227" fontSize="12" fontWeight="bold">
+                <circle cx="0" cy="0" r="18" fill="#c9a227" className="hotel-dot" />
+                <circle cx="0" cy="0" r="11" fill="#1a251a" />
+                <circle cx="0" cy="0" r="5" fill="#c9a227" />
+                <text x="0" y="32" textAnchor="middle" fill="#c9a227" fontSize="11" fontWeight="bold">
                   Hürtur Otel
                 </text>
-                <text x="0" y="48" textAnchor="middle" fill="rgba(255,255,255,0.7)" fontSize="10">
+                <text x="0" y="44" textAnchor="middle" fill="rgba(255,255,255,0.7)" fontSize="9">
                   YATAĞAN
                 </text>
               </svg>
