@@ -470,24 +470,20 @@ export default function HurturOtel() {
           
           <div className="location-container">
             <div className="map-visual-new">
-              <svg viewBox="-220 -160 440 320" className="map-svg">
-                {/* Connection lines with arrows */}
+              <svg viewBox="-200 -140 400 280" className="map-svg">
+                {/* Connection lines */}
                 {t.location.places.map((place, index) => {
                   // Label pozisyonlarını hesapla
                   const getLabelOffset = () => {
                     switch(place.labelPos) {
-                      case 'top': return { x: 0, y: -15, anchor: 'middle' };
-                      case 'bottom': return { x: 0, y: 20, anchor: 'middle' };
+                      case 'top': return { x: 0, y: -14, anchor: 'middle' };
+                      case 'bottom': return { x: 0, y: 18, anchor: 'middle' };
                       case 'left': return { x: -12, y: 4, anchor: 'end' };
                       case 'right': return { x: 12, y: 4, anchor: 'start' };
-                      default: return { x: 0, y: -15, anchor: 'middle' };
+                      default: return { x: 0, y: -14, anchor: 'middle' };
                     }
                   };
                   const labelOffset = getLabelOffset();
-                  
-                  // Mesafe yazısı pozisyonunu çizginin 1/3'üne koy (merkeze daha yakın)
-                  const distX = place.x * 0.4;
-                  const distY = place.y * 0.4;
                   
                   return (
                   <g key={index}>
@@ -504,7 +500,7 @@ export default function HurturOtel() {
                     <circle
                       cx={place.x}
                       cy={place.y}
-                      r="6"
+                      r="5"
                       fill={getTypeColor(place.type)}
                       className={`map-point ${activePlace === index ? 'active' : ''}`}
                       onMouseEnter={() => setActivePlace(index)}
@@ -516,32 +512,24 @@ export default function HurturOtel() {
                       textAnchor={labelOffset.anchor}
                       className={`map-label ${activePlace === index ? 'active' : ''}`}
                       fill="#fff"
-                      fontSize="10"
+                      fontSize="11"
                       fontWeight="500"
                     >
-                      {place.name}
-                    </text>
-                    <text
-                      x={distX}
-                      y={distY}
-                      textAnchor="middle"
-                      className="map-distance"
-                      fill={getTypeColor(place.type)}
-                      fontSize="9"
-                      fontWeight="600"
-                    >
-                      {place.distance} km
+                      {place.name} ({place.distance} km)
                     </text>
                   </g>
                   );
                 })}
                 
                 {/* Hotel center marker */}
-                <circle cx="0" cy="0" r="18" fill="#c9a227" className="hotel-dot" />
-                <circle cx="0" cy="0" r="11" fill="#1a251a" />
-                <circle cx="0" cy="0" r="5" fill="#c9a227" />
-                <text x="0" y="32" textAnchor="middle" fill="#c9a227" fontSize="11" fontWeight="bold">
+                <circle cx="0" cy="0" r="16" fill="#c9a227" className="hotel-dot" />
+                <circle cx="0" cy="0" r="10" fill="#1a251a" />
+                <circle cx="0" cy="0" r="4" fill="#c9a227" />
+                <text x="0" y="28" textAnchor="middle" fill="#c9a227" fontSize="12" fontWeight="bold">
                   Hürtur Otel
+                </text>
+                <text x="0" y="40" textAnchor="middle" fill="rgba(255,255,255,0.7)" fontSize="9">
+                  YATAĞAN
                 </text>
                 <text x="0" y="44" textAnchor="middle" fill="rgba(255,255,255,0.7)" fontSize="9">
                   YATAĞAN
@@ -1438,8 +1426,8 @@ export default function HurturOtel() {
         
         .location-container {
           display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 3rem;
+          grid-template-columns: 1.3fr 1fr;
+          gap: 2rem;
           align-items: center;
           margin-bottom: 2rem;
         }
@@ -1452,14 +1440,14 @@ export default function HurturOtel() {
         
         .map-visual-new {
           width: 100%;
-          max-width: 400px;
+          max-width: 600px;
           margin: 0 auto;
         }
         
         .map-svg {
           width: 100%;
           height: auto;
-          min-height: 300px;
+          min-height: 380px;
         }
         
         .map-line {
@@ -1469,7 +1457,7 @@ export default function HurturOtel() {
         
         .map-line.active {
           opacity: 1;
-          stroke-width: 3;
+          stroke-width: 2.5;
         }
         
         .map-point {
@@ -1478,7 +1466,7 @@ export default function HurturOtel() {
         }
         
         .map-point.active {
-          r: 10;
+          r: 8;
           filter: drop-shadow(0 0 8px currentColor);
         }
         
@@ -1492,13 +1480,8 @@ export default function HurturOtel() {
         
         .map-label.active {
           opacity: 1;
-          font-size: 13px;
-          font-weight: 700;
-        }
-        
-        .map-distance {
-          font-family: 'Montserrat', sans-serif;
-          opacity: 0.8;
+          font-size: 12px;
+          font-weight: 600;
         }
         
         .hotel-dot {
