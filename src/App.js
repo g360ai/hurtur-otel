@@ -41,15 +41,15 @@ const translations = {
       title: 'Keşfedilecek Yerler',
       subtitle: 'Tarihi ve doğal güzelliklere yakın konum',
       places: [
-        { name: 'Bozüyük Köyü', distance: '5 km', type: 'nature' },
-        { name: 'Osman Hamdi Bey Konağı', distance: '6 km', type: 'history' },
-        { name: 'Stratoneika Antik Kenti', distance: '10 km', type: 'history' },
-        { name: 'Belen Kahvesi', distance: '12 km', type: 'nature' },
-        { name: 'Lagina Hekate Kutsal Alanı', distance: '15 km', type: 'history' },
-        { name: 'Küldağı Göleti', distance: '15 km', type: 'nature' },
-        { name: 'Akyaka', distance: '50 km', type: 'coast' },
-        { name: 'Bodrum', distance: '80 km', type: 'coast' },
-        { name: 'Marmaris', distance: '85 km', type: 'coast' }
+        { name: 'Yatağan Merkez', distance: '2', type: 'city', x: 0, y: -60 },
+        { name: 'Stratonikeia', distance: '10', type: 'history', x: -80, y: 60 },
+        { name: 'Lagina', distance: '10', type: 'history', x: 70, y: 50 },
+        { name: 'Belen Kahvesi', distance: '10', type: 'nature', x: 100, y: -20 },
+        { name: 'Muğla', distance: '25', type: 'city', x: 120, y: -70 },
+        { name: 'Gökova', distance: '52', type: 'coast', x: 80, y: 80 },
+        { name: 'Milas', distance: '60', type: 'city', x: -100, y: -50 },
+        { name: 'Bodrum', distance: '60', type: 'coast', x: -120, y: 70 },
+        { name: 'Marmaris', distance: '90', type: 'coast', x: 140, y: 60 }
       ]
     },
     reviews: {
@@ -114,15 +114,15 @@ const translations = {
       title: 'Places to Explore',
       subtitle: 'Close to historical and natural beauties',
       places: [
-        { name: 'Bozüyük Village', distance: '5 km', type: 'nature' },
-        { name: 'Osman Hamdi Bey Mansion', distance: '6 km', type: 'history' },
-        { name: 'Stratonicea Ancient City', distance: '10 km', type: 'history' },
-        { name: 'Belen Coffeehouse', distance: '12 km', type: 'nature' },
-        { name: 'Lagina Hekate Sanctuary', distance: '15 km', type: 'history' },
-        { name: 'Küldağı Lake', distance: '15 km', type: 'nature' },
-        { name: 'Akyaka', distance: '50 km', type: 'coast' },
-        { name: 'Bodrum', distance: '80 km', type: 'coast' },
-        { name: 'Marmaris', distance: '85 km', type: 'coast' }
+        { name: 'Yatağan Center', distance: '2', type: 'city', x: 0, y: -60 },
+        { name: 'Stratonikeia', distance: '10', type: 'history', x: -80, y: 60 },
+        { name: 'Lagina', distance: '10', type: 'history', x: 70, y: 50 },
+        { name: 'Belen Coffeehouse', distance: '10', type: 'nature', x: 100, y: -20 },
+        { name: 'Muğla', distance: '25', type: 'city', x: 120, y: -70 },
+        { name: 'Gökova', distance: '52', type: 'coast', x: 80, y: 80 },
+        { name: 'Milas', distance: '60', type: 'city', x: -100, y: -50 },
+        { name: 'Bodrum', distance: '60', type: 'coast', x: -120, y: 70 },
+        { name: 'Marmaris', distance: '90', type: 'coast', x: 140, y: 60 }
       ]
     },
     reviews: {
@@ -200,12 +200,14 @@ export default function HurturOtel() {
   const getTypeIcon = (type) => {
     if (type === 'history') return <Landmark size={20} />;
     if (type === 'coast') return <Waves size={20} />;
+    if (type === 'city') return <MapPin size={20} />;
     return <TreePine size={20} />;
   };
 
   const getTypeColor = (type) => {
     if (type === 'history') return '#c9a227';
     if (type === 'coast') return '#2980b9';
+    if (type === 'city') return '#9b59b6';
     return '#27ae60';
   };
 
@@ -467,37 +469,65 @@ export default function HurturOtel() {
           <p className="section-subtitle light">{t.location.subtitle}</p>
           
           <div className="location-container">
-            <div className="map-visual">
-              <div className="hotel-center">
-                <div className="hotel-marker">
-                  <MapPin size={24} />
-                </div>
-                <span className="hotel-label">Hürtur Otel</span>
-              </div>
-              
-              {t.location.places.map((place, index) => {
-                const angle = (index * 40) - 160;
-                const distance = parseInt(place.distance);
-                const radius = Math.min(distance * 2.2, 130);
-                return (
-                  <div
-                    key={index}
-                    className={`place-line ${activePlace === index ? 'active' : ''}`}
-                    style={{
-                      transform: `rotate(${angle}deg)`,
-                      width: `${radius}px`,
-                      backgroundColor: getTypeColor(place.type),
-                    }}
-                    onMouseEnter={() => setActivePlace(index)}
-                    onMouseLeave={() => setActivePlace(null)}
-                  >
-                    <span 
-                      className="place-point"
-                      style={{ borderColor: getTypeColor(place.type) }}
+            <div className="map-visual-new">
+              <svg viewBox="-200 -150 400 300" className="map-svg">
+                {/* Connection lines with arrows */}
+                {t.location.places.map((place, index) => (
+                  <g key={index}>
+                    <line
+                      x1="0"
+                      y1="0"
+                      x2={place.x}
+                      y2={place.y}
+                      stroke={getTypeColor(place.type)}
+                      strokeWidth="2"
+                      strokeDasharray="5,3"
+                      className={`map-line ${activePlace === index ? 'active' : ''}`}
                     />
-                  </div>
-                );
-              })}
+                    <circle
+                      cx={place.x}
+                      cy={place.y}
+                      r="6"
+                      fill={getTypeColor(place.type)}
+                      className={`map-point ${activePlace === index ? 'active' : ''}`}
+                      onMouseEnter={() => setActivePlace(index)}
+                      onMouseLeave={() => setActivePlace(null)}
+                    />
+                    <text
+                      x={place.x}
+                      y={place.y - 12}
+                      textAnchor="middle"
+                      className={`map-label ${activePlace === index ? 'active' : ''}`}
+                      fill="#fff"
+                      fontSize="11"
+                    >
+                      {place.name}
+                    </text>
+                    <text
+                      x={place.x / 2}
+                      y={place.y / 2 - 8}
+                      textAnchor="middle"
+                      className="map-distance"
+                      fill={getTypeColor(place.type)}
+                      fontSize="10"
+                      fontWeight="bold"
+                    >
+                      {place.distance} km
+                    </text>
+                  </g>
+                ))}
+                
+                {/* Hotel center marker */}
+                <circle cx="0" cy="0" r="20" fill="#c9a227" className="hotel-dot" />
+                <circle cx="0" cy="0" r="12" fill="#1a251a" />
+                <circle cx="0" cy="0" r="6" fill="#c9a227" />
+                <text x="0" y="35" textAnchor="middle" fill="#c9a227" fontSize="12" fontWeight="bold">
+                  Hürtur Otel
+                </text>
+                <text x="0" y="48" textAnchor="middle" fill="rgba(255,255,255,0.7)" fontSize="10">
+                  YATAĞAN
+                </text>
+              </svg>
             </div>
 
             <div className="places-list">
@@ -514,7 +544,7 @@ export default function HurturOtel() {
                   </span>
                   <div className="place-info">
                     <span className="place-name">{place.name}</span>
-                    <span className="place-distance">{place.distance}</span>
+                    <span className="place-distance">{place.distance} km</span>
                   </div>
                 </div>
               ))}
@@ -523,12 +553,16 @@ export default function HurturOtel() {
 
           <div className="legend">
             <span className="legend-item">
-              <span className="legend-dot" style={{ backgroundColor: '#27ae60' }} />
-              {lang === 'tr' ? 'Doğa' : 'Nature'}
+              <span className="legend-dot" style={{ backgroundColor: '#9b59b6' }} />
+              {lang === 'tr' ? 'Şehir' : 'City'}
             </span>
             <span className="legend-item">
               <span className="legend-dot" style={{ backgroundColor: '#c9a227' }} />
               {lang === 'tr' ? 'Tarih' : 'History'}
+            </span>
+            <span className="legend-item">
+              <span className="legend-dot" style={{ backgroundColor: '#27ae60' }} />
+              {lang === 'tr' ? 'Doğa' : 'Nature'}
             </span>
             <span className="legend-item">
               <span className="legend-dot" style={{ backgroundColor: '#2980b9' }} />
@@ -1397,69 +1431,65 @@ export default function HurturOtel() {
           }
         }
         
-        .map-visual {
-          position: relative;
-          width: 280px;
-          height: 280px;
+        .map-visual-new {
+          width: 100%;
+          max-width: 400px;
           margin: 0 auto;
         }
         
-        .hotel-center {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          z-index: 10;
+        .map-svg {
+          width: 100%;
+          height: auto;
+          min-height: 300px;
         }
         
-        .hotel-marker {
-          width: 48px;
-          height: 48px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: #c9a227;
-          color: #fff;
-          border-radius: 50%;
-          box-shadow: 0 4px 20px rgba(201, 162, 39, 0.4);
-        }
-        
-        .hotel-label {
-          font-size: 0.75rem;
-          color: #fff;
-          font-weight: 600;
-          margin-top: 0.5rem;
-          white-space: nowrap;
-        }
-        
-        .place-line {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          height: 2px;
-          transform-origin: left center;
-          opacity: 0.4;
+        .map-line {
+          opacity: 0.5;
           transition: all 0.3s;
-          cursor: pointer;
         }
         
-        .place-line.active {
+        .map-line.active {
           opacity: 1;
-          height: 3px;
+          stroke-width: 3;
         }
         
-        .place-point {
-          position: absolute;
-          right: -5px;
-          top: -4px;
-          width: 10px;
-          height: 10px;
-          background: #fff;
-          border-radius: 50%;
-          border: 2px solid;
+        .map-point {
+          cursor: pointer;
+          transition: all 0.3s;
+        }
+        
+        .map-point.active {
+          r: 10;
+          filter: drop-shadow(0 0 8px currentColor);
+        }
+        
+        .map-label {
+          font-family: 'Montserrat', sans-serif;
+          font-weight: 500;
+          opacity: 0.9;
+          transition: all 0.3s;
+          pointer-events: none;
+        }
+        
+        .map-label.active {
+          opacity: 1;
+          font-size: 13px;
+          font-weight: 700;
+        }
+        
+        .map-distance {
+          font-family: 'Montserrat', sans-serif;
+          opacity: 0.8;
+        }
+        
+        .hotel-dot {
+          filter: drop-shadow(0 0 15px rgba(201, 162, 39, 0.5));
+          animation: pulse-hotel 2s infinite;
+        }
+        
+        @keyframes pulse-hotel {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
         }
         
         .places-list {
