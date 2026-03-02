@@ -41,15 +41,15 @@ const translations = {
       title: 'Keşfedilecek Yerler',
       subtitle: 'Tarihi ve doğal güzelliklere yakın konum',
       places: [
-        { name: 'Yatağan Merkez', distance: '2', type: 'city', x: 0, y: -75, labelPos: 'top' },
-        { name: 'Stratonikeia', distance: '10', type: 'history', x: -120, y: 20, labelPos: 'left' },
-        { name: 'Lagina', distance: '10', type: 'history', x: 100, y: 40, labelPos: 'right' },
-        { name: 'Belen Kahvesi', distance: '10', type: 'nature', x: 130, y: -40, labelPos: 'right' },
-        { name: 'Muğla', distance: '25', type: 'city', x: 150, y: -90, labelPos: 'top' },
-        { name: 'Gökova', distance: '52', type: 'coast', x: 30, y: 110, labelPos: 'bottom' },
-        { name: 'Milas', distance: '60', type: 'city', x: -140, y: -70, labelPos: 'left' },
-        { name: 'Bodrum', distance: '60', type: 'coast', x: -150, y: 85, labelPos: 'left' },
-        { name: 'Marmaris', distance: '90', type: 'coast', x: 150, y: 100, labelPos: 'right' }
+        { name: 'Yatağan Merkez', distance: '2', type: 'city', x: 0, y: -50, labelPos: 'top', connectFrom: null },
+        { name: 'Stratonikeia', distance: '10', type: 'history', x: -70, y: 30, labelPos: 'left', connectFrom: null },
+        { name: 'Lagina', distance: '10', type: 'history', x: 70, y: 30, labelPos: 'right', connectFrom: null },
+        { name: 'Belen Kahvesi', distance: '10', type: 'nature', x: 60, y: -70, labelPos: 'top', connectFrom: null },
+        { name: 'Muğla', distance: '25', type: 'city', x: 120, y: -90, labelPos: 'right', connectFrom: null },
+        { name: 'Milas', distance: '60', type: 'city', x: -110, y: -60, labelPos: 'top', connectFrom: null },
+        { name: 'Bodrum', distance: '60', type: 'coast', x: -170, y: -30, labelPos: 'left', connectFrom: 5 },
+        { name: 'Gökova', distance: '52', type: 'coast', x: 80, y: 90, labelPos: 'bottom', connectFrom: null },
+        { name: 'Marmaris', distance: '90', type: 'coast', x: 160, y: 70, labelPos: 'right', connectFrom: 7 }
       ]
     },
     reviews: {
@@ -114,15 +114,15 @@ const translations = {
       title: 'Places to Explore',
       subtitle: 'Close to historical and natural beauties',
       places: [
-        { name: 'Yatağan Center', distance: '2', type: 'city', x: 0, y: -75, labelPos: 'top' },
-        { name: 'Stratonikeia', distance: '10', type: 'history', x: -120, y: 20, labelPos: 'left' },
-        { name: 'Lagina', distance: '10', type: 'history', x: 100, y: 40, labelPos: 'right' },
-        { name: 'Belen Coffeehouse', distance: '10', type: 'nature', x: 130, y: -40, labelPos: 'right' },
-        { name: 'Muğla', distance: '25', type: 'city', x: 150, y: -90, labelPos: 'top' },
-        { name: 'Gökova', distance: '52', type: 'coast', x: 30, y: 110, labelPos: 'bottom' },
-        { name: 'Milas', distance: '60', type: 'city', x: -140, y: -70, labelPos: 'left' },
-        { name: 'Bodrum', distance: '60', type: 'coast', x: -150, y: 85, labelPos: 'left' },
-        { name: 'Marmaris', distance: '90', type: 'coast', x: 150, y: 100, labelPos: 'right' }
+        { name: 'Yatağan Center', distance: '2', type: 'city', x: 0, y: -50, labelPos: 'top', connectFrom: null },
+        { name: 'Stratonikeia', distance: '10', type: 'history', x: -70, y: 30, labelPos: 'left', connectFrom: null },
+        { name: 'Lagina', distance: '10', type: 'history', x: 70, y: 30, labelPos: 'right', connectFrom: null },
+        { name: 'Belen Coffeehouse', distance: '10', type: 'nature', x: 60, y: -70, labelPos: 'top', connectFrom: null },
+        { name: 'Muğla', distance: '25', type: 'city', x: 120, y: -90, labelPos: 'right', connectFrom: null },
+        { name: 'Milas', distance: '60', type: 'city', x: -110, y: -60, labelPos: 'top', connectFrom: null },
+        { name: 'Bodrum', distance: '60', type: 'coast', x: -170, y: -30, labelPos: 'left', connectFrom: 5 },
+        { name: 'Gökova', distance: '52', type: 'coast', x: 80, y: 90, labelPos: 'bottom', connectFrom: null },
+        { name: 'Marmaris', distance: '90', type: 'coast', x: 160, y: 70, labelPos: 'right', connectFrom: 7 }
       ]
     },
     reviews: {
@@ -468,28 +468,21 @@ export default function HurturOtel() {
           <h2 className="section-title light">{t.location.title}</h2>
           <p className="section-subtitle light">{t.location.subtitle}</p>
           
-          <div className="location-container">
+          <div className="location-wrapper">
             <div className="map-visual-new">
-              <svg viewBox="-200 -140 400 280" className="map-svg">
-                {/* Connection lines */}
+              <svg viewBox="-200 -120 400 260" className="map-svg">
+                {/* Connection lines - zincirleme bağlantılar */}
                 {t.location.places.map((place, index) => {
-                  // Label pozisyonlarını hesapla
-                  const getLabelOffset = () => {
-                    switch(place.labelPos) {
-                      case 'top': return { x: 0, y: -14, anchor: 'middle' };
-                      case 'bottom': return { x: 0, y: 18, anchor: 'middle' };
-                      case 'left': return { x: -12, y: 4, anchor: 'end' };
-                      case 'right': return { x: 12, y: 4, anchor: 'start' };
-                      default: return { x: 0, y: -14, anchor: 'middle' };
-                    }
-                  };
-                  const labelOffset = getLabelOffset();
+                  const places = t.location.places;
+                  // Eğer connectFrom varsa, o noktadan başla, yoksa merkezden
+                  const startX = place.connectFrom !== null ? places[place.connectFrom].x : 0;
+                  const startY = place.connectFrom !== null ? places[place.connectFrom].y : 0;
                   
                   return (
-                  <g key={index}>
                     <line
-                      x1="0"
-                      y1="0"
+                      key={`line-${index}`}
+                      x1={startX}
+                      y1={startY}
                       x2={place.x}
                       y2={place.y}
                       stroke={getTypeColor(place.type)}
@@ -497,6 +490,24 @@ export default function HurturOtel() {
                       strokeDasharray="4,4"
                       className={`map-line ${activePlace === index ? 'active' : ''}`}
                     />
+                  );
+                })}
+                
+                {/* Points and labels */}
+                {t.location.places.map((place, index) => {
+                  const getLabelOffset = () => {
+                    switch(place.labelPos) {
+                      case 'top': return { x: 0, y: -12, anchor: 'middle' };
+                      case 'bottom': return { x: 0, y: 18, anchor: 'middle' };
+                      case 'left': return { x: -10, y: 4, anchor: 'end' };
+                      case 'right': return { x: 10, y: 4, anchor: 'start' };
+                      default: return { x: 0, y: -12, anchor: 'middle' };
+                    }
+                  };
+                  const labelOffset = getLabelOffset();
+                  
+                  return (
+                  <g key={`point-${index}`}>
                     <circle
                       cx={place.x}
                       cy={place.y}
@@ -512,7 +523,7 @@ export default function HurturOtel() {
                       textAnchor={labelOffset.anchor}
                       className={`map-label ${activePlace === index ? 'active' : ''}`}
                       fill="#fff"
-                      fontSize="11"
+                      fontSize="10"
                       fontWeight="500"
                     >
                       {place.name} ({place.distance} km)
@@ -522,22 +533,16 @@ export default function HurturOtel() {
                 })}
                 
                 {/* Hotel center marker */}
-                <circle cx="0" cy="0" r="16" fill="#c9a227" className="hotel-dot" />
-                <circle cx="0" cy="0" r="10" fill="#1a251a" />
+                <circle cx="0" cy="0" r="14" fill="#c9a227" className="hotel-dot" />
+                <circle cx="0" cy="0" r="9" fill="#1a251a" />
                 <circle cx="0" cy="0" r="4" fill="#c9a227" />
-                <text x="0" y="28" textAnchor="middle" fill="#c9a227" fontSize="12" fontWeight="bold">
+                <text x="0" y="26" textAnchor="middle" fill="#c9a227" fontSize="11" fontWeight="bold">
                   Hürtur Otel
-                </text>
-                <text x="0" y="40" textAnchor="middle" fill="rgba(255,255,255,0.7)" fontSize="9">
-                  YATAĞAN
-                </text>
-                <text x="0" y="44" textAnchor="middle" fill="rgba(255,255,255,0.7)" fontSize="9">
-                  YATAĞAN
                 </text>
               </svg>
             </div>
 
-            <div className="places-list">
+            <div className="places-grid">
               {t.location.places.map((place, index) => (
                 <div 
                   key={index}
@@ -1424,23 +1429,17 @@ export default function HurturOtel() {
           background: linear-gradient(180deg, #1a251a 0%, #263126 100%);
         }
         
-        .location-container {
-          display: grid;
-          grid-template-columns: 1.3fr 1fr;
+        .location-wrapper {
+          display: flex;
+          flex-direction: column;
           gap: 2rem;
           align-items: center;
           margin-bottom: 2rem;
         }
         
-        @media (max-width: 900px) {
-          .location-container {
-            grid-template-columns: 1fr;
-          }
-        }
-        
         .map-visual-new {
           width: 100%;
-          max-width: 600px;
+          max-width: 700px;
           margin: 0 auto;
         }
         
@@ -1494,17 +1493,19 @@ export default function HurturOtel() {
           50% { opacity: 0.7; }
         }
         
-        .places-list {
-          display: flex;
-          flex-direction: column;
-          gap: 0.6rem;
+        .places-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 0.8rem;
+          width: 100%;
+          max-width: 900px;
         }
         
         .place-item {
           display: flex;
           align-items: center;
-          gap: 0.8rem;
-          padding: 0.7rem 1rem;
+          gap: 0.6rem;
+          padding: 0.6rem 0.8rem;
           background: rgba(255,255,255,0.03);
           border-radius: 6px;
           border-left: 3px solid;
@@ -1530,12 +1531,12 @@ export default function HurturOtel() {
         
         .place-name {
           color: #fff;
-          font-size: 0.9rem;
+          font-size: 0.85rem;
         }
         
         .place-distance {
           color: rgba(255,255,255,0.5);
-          font-size: 0.8rem;
+          font-size: 0.75rem;
           font-weight: 600;
         }
         
