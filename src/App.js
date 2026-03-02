@@ -41,15 +41,17 @@ const translations = {
       title: 'Keşfedilecek Yerler',
       subtitle: 'Tarihi ve doğal güzelliklere yakın konum',
       places: [
-        { name: 'Yatağan Merkez', distance: '2', type: 'city', x: 0, y: -50, labelPos: 'top', connectFrom: null },
-        { name: 'Stratonikeia', distance: '10', type: 'history', x: -70, y: 30, labelPos: 'left', connectFrom: null },
-        { name: 'Lagina', distance: '10', type: 'history', x: 70, y: 30, labelPos: 'right', connectFrom: null },
-        { name: 'Belen Kahvesi', distance: '10', type: 'nature', x: 60, y: -70, labelPos: 'top', connectFrom: null },
-        { name: 'Muğla', distance: '25', type: 'city', x: 120, y: -90, labelPos: 'right', connectFrom: null },
-        { name: 'Milas', distance: '60', type: 'city', x: -110, y: -60, labelPos: 'top', connectFrom: null },
-        { name: 'Bodrum', distance: '60', type: 'coast', x: -170, y: -30, labelPos: 'left', connectFrom: 5 },
-        { name: 'Gökova', distance: '52', type: 'coast', x: 80, y: 90, labelPos: 'bottom', connectFrom: null },
-        { name: 'Marmaris', distance: '90', type: 'coast', x: 160, y: 70, labelPos: 'right', connectFrom: 7 }
+        // BATI YOLU (Sol çizgi): Hürtur → Yatağan → Stratonikeia → Milas → Bodrum
+        { name: 'Yatağan', distance: '3', type: 'city', x: -45, y: 5, labelPos: 'bottom', connectFrom: null },
+        { name: 'Stratonikeia', distance: '10', type: 'history', x: -100, y: 10, labelPos: 'bottom', connectFrom: 0 },
+        { name: 'Milas', distance: '41', type: 'city', x: -165, y: 15, labelPos: 'bottom', connectFrom: 1 },
+        { name: 'Bodrum', distance: '85', type: 'coast', x: -240, y: 25, labelPos: 'left', connectFrom: 2 },
+        // DOĞU/GÜNEY YOLU (Sağ çizgi): Hürtur → Muğla → Gökova → Marmaris
+        { name: 'Muğla', distance: '25', type: 'city', x: 65, y: 5, labelPos: 'bottom', connectFrom: null },
+        { name: 'Gökova', distance: '55', type: 'coast', x: 140, y: 20, labelPos: 'bottom', connectFrom: 4 },
+        { name: 'Marmaris', distance: '80', type: 'coast', x: 220, y: 40, labelPos: 'right', connectFrom: 5 },
+        // AYRI NOKTA - Kuzeybatı
+        { name: 'Lagina', distance: '12', type: 'history', x: -50, y: -50, labelPos: 'top', connectFrom: null }
       ]
     },
     reviews: {
@@ -114,15 +116,17 @@ const translations = {
       title: 'Places to Explore',
       subtitle: 'Close to historical and natural beauties',
       places: [
-        { name: 'Yatağan Center', distance: '2', type: 'city', x: 0, y: -50, labelPos: 'top', connectFrom: null },
-        { name: 'Stratonikeia', distance: '10', type: 'history', x: -70, y: 30, labelPos: 'left', connectFrom: null },
-        { name: 'Lagina', distance: '10', type: 'history', x: 70, y: 30, labelPos: 'right', connectFrom: null },
-        { name: 'Belen Coffeehouse', distance: '10', type: 'nature', x: 60, y: -70, labelPos: 'top', connectFrom: null },
-        { name: 'Muğla', distance: '25', type: 'city', x: 120, y: -90, labelPos: 'right', connectFrom: null },
-        { name: 'Milas', distance: '60', type: 'city', x: -110, y: -60, labelPos: 'top', connectFrom: null },
-        { name: 'Bodrum', distance: '60', type: 'coast', x: -170, y: -30, labelPos: 'left', connectFrom: 5 },
-        { name: 'Gökova', distance: '52', type: 'coast', x: 80, y: 90, labelPos: 'bottom', connectFrom: null },
-        { name: 'Marmaris', distance: '90', type: 'coast', x: 160, y: 70, labelPos: 'right', connectFrom: 7 }
+        // WEST ROUTE (Left line): Hürtur → Yatağan → Stratonikeia → Milas → Bodrum
+        { name: 'Yatağan', distance: '3', type: 'city', x: -45, y: 5, labelPos: 'bottom', connectFrom: null },
+        { name: 'Stratonikeia', distance: '10', type: 'history', x: -100, y: 10, labelPos: 'bottom', connectFrom: 0 },
+        { name: 'Milas', distance: '41', type: 'city', x: -165, y: 15, labelPos: 'bottom', connectFrom: 1 },
+        { name: 'Bodrum', distance: '85', type: 'coast', x: -240, y: 25, labelPos: 'left', connectFrom: 2 },
+        // EAST/SOUTH ROUTE (Right line): Hürtur → Muğla → Gökova → Marmaris
+        { name: 'Muğla', distance: '25', type: 'city', x: 65, y: 5, labelPos: 'bottom', connectFrom: null },
+        { name: 'Gökova', distance: '55', type: 'coast', x: 140, y: 20, labelPos: 'bottom', connectFrom: 4 },
+        { name: 'Marmaris', distance: '80', type: 'coast', x: 220, y: 40, labelPos: 'right', connectFrom: 5 },
+        // SEPARATE POINT - Northwest
+        { name: 'Lagina', distance: '12', type: 'history', x: -50, y: -50, labelPos: 'top', connectFrom: null }
       ]
     },
     reviews: {
@@ -470,7 +474,7 @@ export default function HurturOtel() {
           
           <div className="location-wrapper">
             <div className="map-visual-new">
-              <svg viewBox="-200 -120 400 260" className="map-svg">
+              <svg viewBox="-280 -90 560 180" className="map-svg">
                 {/* Connection lines - zincirleme bağlantılar */}
                 {t.location.places.map((place, index) => {
                   const places = t.location.places;
@@ -1439,14 +1443,14 @@ export default function HurturOtel() {
         
         .map-visual-new {
           width: 100%;
-          max-width: 700px;
+          max-width: 900px;
           margin: 0 auto;
         }
         
         .map-svg {
           width: 100%;
           height: auto;
-          min-height: 380px;
+          min-height: 280px;
         }
         
         .map-line {
