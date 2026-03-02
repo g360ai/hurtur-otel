@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Phone, Mail, MapPin, Clock, Wifi, Car, Coffee, Utensils, Droplets, Sparkles, Users, Bed, Home, ChevronDown, Menu, X, Star, ExternalLink, Instagram, Map, TreePine, Landmark, Waves } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Phone, Mail, MapPin, Clock, Wifi, Car, Coffee, Utensils, Droplets, Sparkles, Users, Bed, Home, ChevronDown, Menu, X, Star, ExternalLink, Instagram, Map, TreePine, Landmark, Waves, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Language translations
 const translations = {
@@ -182,7 +182,43 @@ export default function HurturOtel() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activePlace, setActivePlace] = useState(null);
   const [visibleSections, setVisibleSections] = useState({});
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const mapScrollRef = useRef(null);
   const t = translations[lang];
+
+  // Harita scroll'unu merkeze al
+  useEffect(() => {
+    const scrollContainer = mapScrollRef.current;
+    if (scrollContainer) {
+      const centerScroll = () => {
+        const scrollWidth = scrollContainer.scrollWidth;
+        const clientWidth = scrollContainer.clientWidth;
+        const centerPosition = (scrollWidth - clientWidth) / 2;
+        scrollContainer.scrollLeft = centerPosition;
+        updateScrollIndicators();
+      };
+      
+      // Sayfa yüklendiğinde ve resize'da merkeze al
+      centerScroll();
+      window.addEventListener('resize', centerScroll);
+      
+      return () => window.removeEventListener('resize', centerScroll);
+    }
+  }, []);
+
+  // Scroll göstergelerini güncelle
+  const updateScrollIndicators = () => {
+    const el = mapScrollRef.current;
+    if (el) {
+      setCanScrollLeft(el.scrollLeft > 10);
+      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+    }
+  };
+
+  const handleMapScroll = () => {
+    updateScrollIndicators();
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -483,69 +519,86 @@ export default function HurturOtel() {
           <p className="section-subtitle light">{t.location.subtitle}</p>
           
           <div className="location-wrapper">
-            <div className="map-visual-new">
-              <svg viewBox="-290 -30 580 110" className="map-svg">
-                {/* Sol yol çizgisi - Bodrum Güzergahı */}
-                <line x1="0" y1="25" x2="-255" y2="25" 
-                  stroke="#c9a227" strokeWidth="2" strokeDasharray="8,5" opacity="0.35" />
-                
-                {/* Sağ yol çizgisi - Marmaris/Fethiye Güzergahı */}
-                <line x1="0" y1="25" x2="265" y2="25" 
-                  stroke="#3498db" strokeWidth="2" strokeDasharray="8,5" opacity="0.35" />
+            <div className="map-container">
+              {/* Sol scroll göstergesi */}
+              <div className={`map-scroll-hint left ${canScrollLeft ? 'visible' : ''}`}>
+                <ChevronLeft size={20} />
+              </div>
+              
+              <div 
+                className="map-visual-new" 
+                ref={mapScrollRef}
+                onScroll={handleMapScroll}
+              >
+                <svg viewBox="-300 -25 600 100" className="map-svg">
+                  {/* Sol yol çizgisi - Bodrum Güzergahı */}
+                  <line x1="0" y1="25" x2="-270" y2="25" 
+                    stroke="#c9a227" strokeWidth="2.5" strokeDasharray="8,5" opacity="0.4" />
+                  
+                  {/* Sağ yol çizgisi - Marmaris/Fethiye Güzergahı */}
+                  <line x1="0" y1="25" x2="280" y2="25" 
+                    stroke="#3498db" strokeWidth="2.5" strokeDasharray="8,5" opacity="0.4" />
 
-                {/* Noktalar ve Etiketler */}
-                {t.location.places.map((place, index) => (
-                  <g key={`point-${index}`}>
-                    <circle
-                      cx={place.x}
-                      cy={place.y}
-                      r={activePlace === index ? 7 : 5}
-                      fill={getTypeColor(place.type)}
-                      className={`map-point ${activePlace === index ? 'active' : ''}`}
-                      onMouseEnter={() => setActivePlace(index)}
-                      onMouseLeave={() => setActivePlace(null)}
-                    />
-                    <text
-                      x={place.x}
-                      y={place.y - 12}
-                      textAnchor="middle"
-                      className={`map-label ${activePlace === index ? 'active' : ''}`}
-                      fill="#fff"
-                      fontSize={activePlace === index ? 9 : 8}
-                      fontWeight="500"
-                    >
-                      {place.name}
-                    </text>
-                    <text
-                      x={place.x}
-                      y={place.y + 16}
-                      textAnchor="middle"
-                      fill="rgba(255,255,255,0.4)"
-                      fontSize="6"
-                    >
-                      {place.distance} km
-                    </text>
-                  </g>
-                ))}
+                  {/* Noktalar ve Etiketler */}
+                  {t.location.places.map((place, index) => (
+                    <g key={`point-${index}`}>
+                      <circle
+                        cx={place.x}
+                        cy={place.y}
+                        r={activePlace === index ? 8 : 6}
+                        fill={getTypeColor(place.type)}
+                        className={`map-point ${activePlace === index ? 'active' : ''}`}
+                        onMouseEnter={() => setActivePlace(index)}
+                        onMouseLeave={() => setActivePlace(null)}
+                      />
+                      <text
+                        x={place.x}
+                        y={place.y - 14}
+                        textAnchor="middle"
+                        className={`map-label ${activePlace === index ? 'active' : ''}`}
+                        fill="#fff"
+                        fontSize={activePlace === index ? 11 : 10}
+                        fontWeight="600"
+                      >
+                        {place.name}
+                      </text>
+                      <text
+                        x={place.x}
+                        y={place.y + 20}
+                        textAnchor="middle"
+                        fill="rgba(255,255,255,0.6)"
+                        fontSize="8"
+                        fontWeight="500"
+                      >
+                        {place.distance} km
+                      </text>
+                    </g>
+                  ))}
 
-                {/* Yön etiketleri */}
-                <text x="-255" y="50" textAnchor="middle" fill="rgba(255,255,255,0.3)" fontSize="6">
-                  ← BODRUM
-                </text>
-                <text x="265" y="50" textAnchor="middle" fill="rgba(255,255,255,0.3)" fontSize="6">
-                  FETHİYE →
-                </text>
+                  {/* Yön etiketleri */}
+                  <text x="-270" y="55" textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="9" fontWeight="600">
+                    ← BODRUM
+                  </text>
+                  <text x="280" y="55" textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="9" fontWeight="600">
+                    FETHİYE →
+                  </text>
 
-                {/* OTEL MERKEZİ */}
-                <circle cx="0" cy="25" r="14" fill="none" stroke="#c9a227" strokeWidth="1.5" opacity="0.3" />
-                <circle cx="0" cy="25" r="10" fill="#c9a227" className="hotel-dot" />
-                <circle cx="0" cy="25" r="6" fill="#1a251a" />
-                <circle cx="0" cy="25" r="3" fill="#c9a227" />
-                <text x="0" y="60" textAnchor="middle" fill="#c9a227" fontSize="9" fontWeight="bold">
-                  Hürtur Otel
-                </text>
-              </svg>
+                  {/* OTEL MERKEZİ */}
+                  <circle cx="0" cy="25" r="16" fill="none" stroke="#c9a227" strokeWidth="2" opacity="0.4" />
+                  <circle cx="0" cy="25" r="12" fill="#c9a227" className="hotel-dot" />
+                  <circle cx="0" cy="25" r="8" fill="#1a251a" />
+                  <circle cx="0" cy="25" r="4" fill="#c9a227" />
+                </svg>
+              </div>
+              
+              {/* Sağ scroll göstergesi */}
+              <div className={`map-scroll-hint right ${canScrollRight ? 'visible' : ''}`}>
+                <ChevronRight size={20} />
+              </div>
             </div>
+            
+            {/* Otel ismi harita altında */}
+            <div className="hotel-label">Hürtur Otel</div>
 
             {/* İki Sütunlu Yerler Listesi */}
             <div className="places-columns">
@@ -1466,16 +1519,27 @@ export default function HurturOtel() {
         .location-wrapper {
           display: flex;
           flex-direction: column;
-          gap: 2rem;
+          gap: 1.5rem;
           align-items: center;
           margin-bottom: 2rem;
         }
         
-        .map-visual-new {
+        .map-container {
+          position: relative;
           width: 100%;
           max-width: 900px;
-          margin: 0 auto;
+        }
+        
+        .map-visual-new {
+          width: 100%;
           overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        
+        .map-visual-new::-webkit-scrollbar {
+          display: none;
         }
         
         .map-svg {
@@ -1484,18 +1548,65 @@ export default function HurturOtel() {
           min-height: 120px;
         }
         
-        /* Mobil için harita ölçekleme */
+        /* Mobil için harita */
         @media (max-width: 768px) {
-          .map-visual-new {
-            overflow-x: scroll;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 10px;
-          }
-          
           .map-svg {
-            min-width: 650px;
-            min-height: 100px;
+            min-width: 700px;
+            min-height: 110px;
           }
+        }
+        
+        /* Harita scroll göstergeleri */
+        .map-scroll-hint {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 36px;
+          height: 36px;
+          background: rgba(201, 162, 39, 0.95);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #1a251a;
+          opacity: 0;
+          transition: opacity 0.3s;
+          pointer-events: none;
+          z-index: 10;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
+        
+        .map-scroll-hint.left {
+          left: 8px;
+        }
+        
+        .map-scroll-hint.right {
+          right: 8px;
+        }
+        
+        .map-scroll-hint.visible {
+          opacity: 1;
+          animation: pulse-arrow 1.5s infinite;
+        }
+        
+        @keyframes pulse-arrow {
+          0%, 100% { transform: translateY(-50%) scale(1); }
+          50% { transform: translateY(-50%) scale(1.15); }
+        }
+        
+        /* Desktop'ta göstergeleri gizle */
+        @media (min-width: 769px) {
+          .map-scroll-hint {
+            display: none;
+          }
+        }
+        
+        .hotel-label {
+          color: #c9a227;
+          font-size: 1rem;
+          font-weight: 700;
+          text-align: center;
+          letter-spacing: 1px;
         }
         
         .map-point {
@@ -1504,20 +1615,19 @@ export default function HurturOtel() {
         }
         
         .map-point.active {
-          filter: drop-shadow(0 0 10px currentColor);
+          filter: drop-shadow(0 0 12px currentColor);
         }
         
         .map-label {
           font-family: 'Montserrat', sans-serif;
-          font-weight: 500;
-          opacity: 0.9;
+          font-weight: 600;
+          opacity: 0.95;
           transition: all 0.3s;
           pointer-events: none;
         }
         
         .map-label.active {
           opacity: 1;
-          font-weight: 600;
         }
         
         .hotel-dot {
@@ -1536,7 +1646,7 @@ export default function HurturOtel() {
           gap: 2rem;
           width: 100%;
           max-width: 700px;
-          margin-top: 2rem;
+          margin-top: 1rem;
         }
         
         @media (max-width: 600px) {
@@ -1552,7 +1662,7 @@ export default function HurturOtel() {
         }
         
         .route-title {
-          font-size: 0.7rem;
+          font-size: 0.75rem;
           text-transform: uppercase;
           letter-spacing: 1.5px;
           margin-bottom: 0.8rem;
